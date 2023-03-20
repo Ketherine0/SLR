@@ -17,8 +17,16 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
         -> Lasso problem
     (3) Lambda_{k+1}= Lambda_k+ beta(Y - D@X_k - L)
 
-    Input: Y, D, alpha, global_max_iter, lasso_max_iter
-    Output: X, L
+    Input: 
+    Y:                  test sample
+    D:                  dictionary consisting of training frames
+    alpha:              weighting hyperparameter
+    global_max_iter:    maximum number of iterations for ADMM method
+    lasso_max_iter:     maximum number of iterations for solving lasso subproblem
+
+    Output: 
+    X:  sparse matrix
+    L:  low-rank matrix
     '''
     M, K = Y.shape
     N = D.shape[1]
@@ -30,7 +38,7 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
     Dt = D.T
     DtD = Dt @ D 
     tau = np.max(np.abs(np.linalg.eigvals(DtD)))
-    tauInv = 1/tau
+    tauInv = 1 / tau
     beta = (20*M*K) / np.sum(np.abs(Y))
     betaInv = 1 / beta
     betaTauInv = betaInv * tauInv
@@ -48,8 +56,8 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
         L = U@np.diag(S)@V
         
         # (2) Solve X_{k+1}= argmin X : ||X||_1 + (beta/2)||Y - D@X_k - L + (1/beta)Lambda_k||_F^2 
-        # Reduced to x_{k+1}= argmin x : ||x||_1 + (beta/2)||b-Ax||_2^2 per column
-        # Reduced to x_{k+1}= argmin x : (2/beta)||x||_1 + ||b-Ax||_2^2 per column
+        # Reduced to x_{k+1}= argmin x : ||x||_1 + (beta/2)||b-Dx||_2^2 per column
+        # Reduced to x_{k+1}= argmin x : (2/beta)||x||_1 + ||b-Dx||_2^2 per column
         b = (Y - L + (1/beta)*Lambda)
         Dtb = Dt@b
         for c in range(K):
