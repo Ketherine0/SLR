@@ -14,7 +14,7 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
         -> L_{k+1}= D_{(alpha/beta)}(Y - D@X_k + (1/beta)Lambda_k) 
                   = U @ S_{(alpha/beta)}(Sigma) @ V^t, for the SVD of Y - D@X_k -(1/beta)Lambda_k.
     (2) Solve X_{k+1}= argmin X : ||X||_1 + (beta/2)||Y - D@X_k - L +(1/beta)Lambda_k||_F^2 
-        -> Lasso problem. Should be solved using ADMM
+        -> Lasso problem
     (3) Lambda_{k+1}= Lambda_k+ beta(Y - D@X_k - L)
 
     Input: Y, D, alpha, global_max_iter, lasso_max_iter
