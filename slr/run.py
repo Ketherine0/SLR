@@ -1,4 +1,9 @@
-from GenerateDataMatrix import GenerateDataMatrix
+### switch to the second method of generating data
+from GenerateDataMatrix2 import GenerateDataMatrix
+
+### switch to the first method of generating data
+### Give each video a label
+# from GenerateDataMatrix1 import GenerateDataMatrix
 from CountVideosPerClass import CountVideosPerClass
 from GetClassIndex import GetClassIndex
 from ccSolveModel import ccSolveModel
@@ -9,7 +14,10 @@ import numpy as np
 
 
 path = "../stroke_data/data_new"
-X, y = GenerateDataMatrix(path)
+X, y = GenerateDataMatrix(path, 10)
+
+### Use second generation method
+#X, y = GenerateDataMatrix(path, 10)
 print('Generating Train and Test Indices \n')
 num_videos_per_class=CountVideosPerClass(y)
 class_idx =  GetClassIndex(y)
@@ -42,18 +50,18 @@ for i in range(4):
         test_x = np.hstack((test_x, X[:, test_idx]))
 
 
-
 dictionary = Normalize(train_x)
 
 global_max_iter=600
 lasso_max_iter=100
-alpha =10
+alpha = 10
 # confussion_matrix=np.zeros((7,7))
 num_correct_classified=0
 num_experiments_run=0
+num_class = 4
 
-
-class_pred, Xr, Lr = ccSolveModel(dictionary, train_y, test_x, alpha, global_max_iter, lasso_max_iter)
+print("Generating")
+class_pred, Xr, Lr = ccSolveModel(dictionary, train_y, test_x, num_class, alpha, global_max_iter, lasso_max_iter)
 # print('Label: Matched %d - Real %d \n',class_pred)
 
 conf_mat = confusion_matrix(test_y, class_pred)
