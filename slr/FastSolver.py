@@ -31,9 +31,9 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
     M, K = Y.shape
     N = D.shape[1]
 
-    X = np.zeros(N,K)
-    L = np.zeros(M,K)
-    Lambda = np.ones(M,K)
+    X = np.zeros((N,K))
+    L = np.zeros((M,K))
+    Lambda = np.ones((M,K))
 
     Dt = D.T
     DtD = Dt @ D 
