@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.sparse.linalg import svds
 from shrink import shrink
 from FastIllinoisSolver import FastIllinoisSolver
 
@@ -51,7 +52,7 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
         L_old = L   
         
         # (1) Solve L_{k+1}= argmin L : alpha||L||_* + beta/(2*alpha) * ||Y - D@X_k - L + (1/beta)Lambda_k||_F^2 
-        U,S,V = np.linalg.svd(Y - D@X + (1/beta)*Lambda, full_matrices=False)
+        U,S,V = svds(Y - D@X + (1/beta)*Lambda, full_matrices=False)
         S = shrink(S,(alpha/beta))
         L = U@np.diag(S)@V
         
@@ -67,7 +68,7 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
         Lambda = Lambda + beta*(Y - D@X - L)
         
         # Stopping Criteria
-        if (np.linalg.norm(X_old - X) < tolX *  np.linalg.norm(X_old)) and (np.linalg.norm(L_old - L) < tolL * np.linalg.norm(L_old)):
+        if (np.linalg.norm(X_old - X) < tolX * np.linalg.norm(X_old)) and (np.linalg.norm(L_old - L) < tolL * np.linalg.norm(L_old)):
             break
         
         # Print Error
