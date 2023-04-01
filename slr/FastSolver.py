@@ -68,7 +68,7 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
         Lambda = Lambda + beta*(Y - D@X - L)
         
         # Stopping Criteria
-        if (np.linalg.norm(X_old - X) < tolX *  np.linalg.norm(X_old)) and (np.linalg.norm(L_old - L) < tolL * np.linalg.norm(L_old)):
+        if (np.linalg.norm(X_old - X) < tolX * np.linalg.norm(X_old)) and (np.linalg.norm(L_old - L) < tolL * np.linalg.norm(L_old)):
             break
         
         # Print Error
