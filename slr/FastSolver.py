@@ -3,7 +3,7 @@ from shrink import shrink
 from FastIllinoisSolver import FastIllinoisSolver
 import time
 from scipy.linalg import eigh as largest_eigh
-from scipy.sparse.linalg.eigen.arpack import eigsh as largest_eigsh
+from scipy.sparse.linalg import eigsh as largest_eigsh
 import scipy.sparse.linalg
 
 
