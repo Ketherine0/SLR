@@ -1,4 +1,3 @@
-### switch to the second method of generating data
 from GenerateDataMatrix2 import GenerateDataMatrix
 
 ### switch to the first method of generating data
@@ -44,10 +43,15 @@ for i in range(4):
     if not begin:
         train_x = X[:,train_idx]
         test_x = X[:,test_idx]
+        train_x = X[:,train_idx][:,:10000]
+        test_x = X[:,test_idx][:,:50]
         begin = True
     else:
         train_x = np.hstack((train_x, X[:,train_idx]))
         test_x = np.hstack((test_x, X[:, test_idx]))
+        train_x = np.hstack((train_x, X[:,train_idx]))[:,:10000]
+        test_x = np.hstack((test_x, X[:, test_idx]))[:,:50]
+    # print(train_x.shape)
 
 
 dictionary = Normalize(train_x)
@@ -55,22 +59,19 @@ dictionary = Normalize(train_x)
 global_max_iter=600
 lasso_max_iter=100
 alpha = 10
+
+global_max_iter=60
+lasso_max_iter=200
+alpha = 1
 # confussion_matrix=np.zeros((7,7))
 num_correct_classified=0
 num_experiments_run=0
 num_class = 4
 
 print("Generating")
+class_pred, Xr, Lr = ccSolveModel(dictionary, train_y, test_x, num_class, alpha, global_max_iter, lasso_max_iter)
+print(test_x.shape)
 class_pred, Xr, Lr = ccSolveModel(dictionary, train_y, test_x, num_class, global_max_iter, lasso_max_iter, alpha)
 # print('Label: Matched %d - Real %d \n',class_pred)
 
 conf_mat = confusion_matrix(test_y, class_pred)
-acc = accuracy_score(test_y, class_pred)
-
-print('Recognition Rate = %f \n',acc);
-print('Confusion Matrix  \n', conf_mat);
-
-
-
-
-
