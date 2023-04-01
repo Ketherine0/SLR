@@ -1,7 +1,11 @@
 import numpy as np
-from scipy.sparse.linalg import svds
 from shrink import shrink
 from FastIllinoisSolver import FastIllinoisSolver
+import time
+from scipy.linalg import eigh as largest_eigh
+from scipy.sparse.linalg.eigen.arpack import eigsh as largest_eigsh
+import scipy.sparse.linalg
+
 
 def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
     '''
@@ -32,50 +36,73 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
     M, K = Y.shape
     N = D.shape[1]
 
-    X = np.zeros((N,K))
-    L = np.zeros((M,K))
-    Lambda = np.ones((M,K))
+    X = np.zeros((N, K))
+    L = np.zeros((M, K))
+    Lambda = np.ones((M, K))
 
     Dt = D.T
-    DtD = Dt @ D 
+    DtD = Dt @ D
     tau = np.max(np.abs(np.linalg.eigvals(DtD)))
+    DtD = Dt @ D
+
+    # start = time.process_time()
+    # evals_large, evecs_large = largest_eigh(DtD, eigvals=(N - 1, N - 1))
+    # elapsed = (time.process_time() - start)
+    # print("eigh elapsed time: ", elapsed)
+
+    # Benchmark the sparse routine
+    start = time.process_time()
+    tau, evecs_large_sparse = largest_eigsh(DtD, 1, which='LM')
+    elapsed = (time.process_time() - start)
+    print("eigsh elapsed time: ", elapsed)
+
+    # start = time.process_time()
+    # tau = np.max(np.abs(np.linalg.eigvals(DtD)))
+    # elapsed = (time.process_time() - start)
+    # print("linalg elapsed time: ", elapsed)
+
     tauInv = 1 / tau
-    beta = (20*M*K) / np.sum(np.abs(Y))
+    beta = (20 * M * K) / np.sum(np.abs(Y))
     betaInv = 1 / beta
     betaTauInv = betaInv * tauInv
 
     tolX = 1e-6
     tolL = 1e-6
     for i in range(global_max_iter):
-        print('Global Iteration %d of %d \n'%(i,global_max_iter))
+        print('Global Iteration %d of %d \n' % (i, global_max_iter))
         X_old = X
-        L_old = L   
-        
-        # (1) Solve L_{k+1}= argmin L : alpha||L||_* + beta/(2*alpha) * ||Y - D@X_k - L + (1/beta)Lambda_k||_F^2 
-        U,S,V = svds(Y - D@X + (1/beta)*Lambda, full_matrices=False)
-        S = shrink(S,(alpha/beta))
-        L = U@np.diag(S)@V
-        
-        # (2) Solve X_{k+1}= argmin X : ||X||_1 + (beta/2)||Y - D@X_k - L + (1/beta)Lambda_k||_F^2 
-        # Reduced to x_{k+1}= argmin x : ||x||_1 + (beta/2)||b-Dx||_2^2 per column
-        # Reduced to x_{k+1}= argmin x : (2/beta)||x||_1 + ||b-Dx||_2^2 per column
-        b = (Y - L + (1/beta)*Lambda)
-        Dtb = Dt@b
-        for c in range(K):
-            X[:,c] = FastIllinoisSolver(DtD, Dtb[:,c], X[:,c], tauInv, betaTauInv,lasso_max_iter)
+        L_old = L
 
+        # (1) Solve L_{k+1}= argmin L : alpha||L||_* + beta/(2*alpha) * ||Y - D@X_k - L + (1/beta)Lambda_k||_F^2 
+        U, S, V = np.linalg.svd(Y - D @ X + (1 / beta) * Lambda, full_matrices=False)
+        # U,S,V = np.linalg.svd(Y - D@X + (1/beta)*Lambda, full_matrices=False)
+        start = time.process_time()
+        U, S, V = scipy.sparse.linalg.svds(Y - D @ X + (1 / beta) * Lambda)
+        elapsed = (time.process_time() - start)
+        print("SVD time: ", elapsed)
+
+        S = shrink(S, (alpha / beta))
+        L = U @ np.diag(S) @ V
+        # Reduced to x_{k+1}= argmin x : (2/beta)||x||_1 + ||b-Dx||_2^2 per column
+        b = (Y - L + (1 / beta) * Lambda)
+        Dtb = Dt @ b
+        print("begin FastIllinois")
+
+        start = time.process_time()
+
+        for c in range(K):
+            print('col: ', c)
+            X[:, c] = FastIllinoisSolver(DtD, Dtb[:, c], X[:, c], tauInv, betaTauInv, lasso_max_iter)
+
+        elapsed = (time.process_time() - start)
+        print("eigsh elapsed time: ", elapsed)
         # (3) Lambda_{k+1}= Lambda_k+ beta(Y-D@X_k-L)
-        Lambda = Lambda + beta*(Y - D@X - L)
-        
+        Lambda = Lambda + beta * (Y - D @ X - L)
+
         # Stopping Criteria
-        if (np.linalg.norm(X_old - X) < tolX * np.linalg.norm(X_old)) and (np.linalg.norm(L_old - L) < tolL * np.linalg.norm(L_old)):
+        print(np.linalg.norm(X_old - X))
+        print(tolX * np.linalg.norm(X_old))
+        if (np.linalg.norm(X_old - X) < tolX * np.linalg.norm(X_old)) and (
+                np.linalg.norm(L_old - L) < tolL * np.linalg.norm(L_old)):
             break
-        
-        # Print Error
-        energy = np.linalg.norm(X, ord=1) + alpha * np.sum(S)
-        constraint_error = np.linalg.norm(Y - D@X - L)**2
-        print('L1 norm of X =', np.linalg.norm(X, ord=1))
-        print('Nuclear norm of L =', np.sum(S))
-        print('EnergyFunction =', energy)
-        print('Constraint Error =', constraint_error)
-    return X, L
+
