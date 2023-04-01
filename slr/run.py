@@ -61,7 +61,7 @@ num_experiments_run=0
 num_class = 4
 
 print("Generating")
-class_pred, Xr, Lr = ccSolveModel(dictionary, train_y, test_x, num_class, alpha, global_max_iter, lasso_max_iter)
+class_pred, Xr, Lr = ccSolveModel(dictionary, train_y, test_x, num_class, global_max_iter, lasso_max_iter, alpha)
 # print('Label: Matched %d - Real %d \n',class_pred)
 
 conf_mat = confusion_matrix(test_y, class_pred)
