@@ -2,7 +2,6 @@ import numpy as np
 from shrink import shrink
 from FastIllinoisSolver import FastIllinoisSolver
 import time
-from scipy.linalg import eigh as largest_eigh
 from scipy.sparse.linalg import eigsh as largest_eigsh
 import scipy.sparse.linalg
 
@@ -45,21 +44,11 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
     tau = np.max(np.abs(np.linalg.eigvals(DtD)))
     DtD = Dt @ D
 
-    # start = time.process_time()
-    # evals_large, evecs_large = largest_eigh(DtD, eigvals=(N - 1, N - 1))
-    # elapsed = (time.process_time() - start)
-    # print("eigh elapsed time: ", elapsed)
-
     # Benchmark the sparse routine
     start = time.process_time()
     tau, evecs_large_sparse = largest_eigsh(DtD, 1, which='LM')
     elapsed = (time.process_time() - start)
     print("eigsh elapsed time: ", elapsed)
-
-    # start = time.process_time()
-    # tau = np.max(np.abs(np.linalg.eigvals(DtD)))
-    # elapsed = (time.process_time() - start)
-    # print("linalg elapsed time: ", elapsed)
 
     tauInv = 1 / tau
     beta = (20 * M * K) / np.sum(np.abs(Y))
@@ -74,7 +63,6 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
         L_old = L
 
         # (1) Solve L_{k+1}= argmin L : ||L||_* + beta/(2*alpha) * ||Y - D@X_k - L + (1/beta)Lambda_k||_F^2 
-        # U,S,V = np.linalg.svd(Y - D@X + (1/beta)*Lambda, full_matrices=False)
         start = time.process_time()
         U, S, V = scipy.sparse.linalg.svds(Y - D @ X + (1 / beta) * Lambda)
         elapsed = (time.process_time() - start)
