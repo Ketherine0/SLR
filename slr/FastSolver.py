@@ -73,8 +73,7 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
         X_old = X
         L_old = L
 
-        # (1) Solve L_{k+1}= argmin L : alpha||L||_* + beta/(2*alpha) * ||Y - D@X_k - L + (1/beta)Lambda_k||_F^2 
-        U, S, V = np.linalg.svd(Y - D @ X + (1 / beta) * Lambda, full_matrices=False)
+        # (1) Solve L_{k+1}= argmin L : ||L||_* + beta/(2*alpha) * ||Y - D@X_k - L + (1/beta)Lambda_k||_F^2 
         # U,S,V = np.linalg.svd(Y - D@X + (1/beta)*Lambda, full_matrices=False)
         start = time.process_time()
         U, S, V = scipy.sparse.linalg.svds(Y - D @ X + (1 / beta) * Lambda)
@@ -83,19 +82,20 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
 
         S = shrink(S, (alpha / beta))
         L = U @ np.diag(S) @ V
+
+        # (2) Solve X_{k+1}= argmin X : ||X||_1 + (beta/2)||Y - D@X_k - L +(1/beta)Lambda_k||_F^2
         # Reduced to x_{k+1}= argmin x : (2/beta)||x||_1 + ||b-Dx||_2^2 per column
         b = (Y - L + (1 / beta) * Lambda)
         Dtb = Dt @ b
         print("begin FastIllinois")
 
         start = time.process_time()
-
         for c in range(K):
             print('col: ', c)
             X[:, c] = FastIllinoisSolver(DtD, Dtb[:, c], X[:, c], tauInv, betaTauInv, lasso_max_iter)
-
         elapsed = (time.process_time() - start)
         print("eigsh elapsed time: ", elapsed)
+
         # (3) Lambda_{k+1}= Lambda_k+ beta(Y-D@X_k-L)
         Lambda = Lambda + beta * (Y - D @ X - L)
 
