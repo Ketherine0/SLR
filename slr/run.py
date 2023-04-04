@@ -1,8 +1,8 @@
-from GenerateDataMatrix2 import GenerateDataMatrix
+# from GenerateDataMatrix2 import GenerateDataMatrix
 
 ### switch to the first method of generating data
 ### Give each video a label
-# from GenerateDataMatrix1 import GenerateDataMatrix
+from GenerateDataMatrix1 import GenerateDataMatrix
 from CountVideosPerClass import CountVideosPerClass
 from GetClassIndex import GetClassIndex
 from ccSolveModel import ccSolveModel
@@ -13,7 +13,7 @@ import numpy as np
 
 
 path = "../stroke_data/data_new"
-X, y = GenerateDataMatrix(path, 10)
+X, y = GenerateDataMatrix(path)
 
 ### Use second generation method
 #X, y = GenerateDataMatrix(path, 10)
