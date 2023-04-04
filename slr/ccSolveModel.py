@@ -20,15 +20,10 @@ def ccSolveModel(X_train, y_train, X_test, num_classes, global_max_iter, lasso_m
     X_recovered, L_recovered = FastSolver(X_test, X_train, alpha, global_max_iter, lasso_max_iter)
     nearest_class_distance = np.Inf
     nearest_class_index = -1
-    print(X_train.shape)
     for i in range(1, num_classes+1):
-        print(y_train)
-        idx = [i for i,x in enumerate(y_train) if x==i]
-        print(idx)
+        idx = [index for index, element in enumerate(y_train) if element == i]
         class_matrix = X_train[:, idx]
-        print(class_matrix.shape)
-        print(X_recovered[y_train == i,:].shape)
-        class_representation = class_matrix @ X_recovered[y_train == i,:]
+        class_representation = class_matrix @ X_recovered[idx,:]
         class_representation += L_recovered
         error = np.linalg.norm(class_representation - X_test)
         if error < nearest_class_distance:
