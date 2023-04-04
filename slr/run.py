@@ -32,7 +32,7 @@ train_y = []
 test_y = []
 begin = False
 train_sample_per_class = 2000
-test_sample_per_class = 50
+test_sample_per_class = 20
 
 
 for i in range(4):
@@ -58,12 +58,8 @@ for i in range(4):
 
 dictionary = Normalize(train_x)
 
-global_max_iter=600
+global_max_iter=10
 lasso_max_iter=100
-alpha = 10
-
-global_max_iter=20
-lasso_max_iter=200
 alpha = 1
 # confussion_matrix=np.zeros((7,7))
 num_correct_classified=0
