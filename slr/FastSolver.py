@@ -71,7 +71,6 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
 
         start = time.process_time()
         for c in range(K):
-            print('col: ', c)
             X[:, c] = FastIllinoisSolver(DtD, Dtb[:, c], X[:, c], tauInv, betaTauInv, lasso_max_iter)
         elapsed = (time.process_time() - start)
         print("FastIllinois time: ", elapsed)
@@ -80,8 +79,8 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
         Lambda = Lambda + beta * (Y - D @ X - L)
 
         # Stopping Criteria
-        print(np.linalg.norm(X_old - X))
-        print(tolX * np.linalg.norm(X_old))
+        # print("X_old - X",X_old - X)
+        # print("L_old - L",L_old - L)
         if (np.linalg.norm(X_old - X) < tolX * np.linalg.norm(X_old)) and (
                 np.linalg.norm(L_old - L) < tolL * np.linalg.norm(L_old)):
             break
