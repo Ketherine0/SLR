@@ -31,7 +31,8 @@ test_x = np.zeros((1))
 train_y = []
 test_y = []
 begin = False
-test_sample_per_class = 2000
+train_sample_per_class = 2000
+test_sample_per_class = 50
 
 
 for i in range(4):
@@ -39,19 +40,19 @@ for i in range(4):
     test_idx = list(set(class_idx[i]) - set(train_idx))
     train_indices.append(train_idx)
     test_indices.append(test_idx)
-    train_y = (train_y+(np.array(y)[train_idx].tolist()))[:test_sample_per_class]
-    test_y = (test_y + (np.array(y)[test_idx].tolist()))[:50]
+    train_y = (train_y+(np.array(y)[train_idx][:train_sample_per_class].tolist()))
+    test_y = (test_y + (np.array(y)[test_idx][:test_sample_per_class].tolist()))
     if not begin:
         # train_x = X[:,train_idx]
         # test_x = X[:,test_idx]
-        train_x = X[:,train_idx][:,:test_sample_per_class]
-        test_x = X[:,test_idx][:,:50]
+        train_x = X[:,train_idx][:,:train_sample_per_class]
+        test_x = X[:,test_idx][:,:test_sample_per_class]
         begin = True
     else:
         # train_x = np.hstack((train_x, X[:,train_idx]))
         # test_x = np.hstack((test_x, X[:, test_idx]))
-        train_x = np.hstack((train_x, X[:,train_idx]))[:,:test_sample_per_class]
-        test_x = np.hstack((test_x, X[:, test_idx]))[:,:50]
+        train_x = np.hstack((train_x, X[:,train_idx][:,:train_sample_per_class]))
+        test_x = np.hstack((test_x, X[:, test_idx][:,:test_sample_per_class]))
     # print(train_x.shape)
 
 
@@ -69,9 +70,12 @@ num_correct_classified=0
 num_experiments_run=0
 num_class = 4
 
+print(test_x.shape)
 print("Generating")
-matched_pred, Xr, Lr = ccSolveModel(dictionary, train_y, test_x, num_class, global_max_iter, lasso_max_iter, alpha)
-print('Label: Matched %d - Real %d \n',matched_pred)
+for i in range(num_class):
+    for j in range(test_sample_per_class):
+# matched_pred, Xr, Lr = ccSolveModel(dictionary, train_y, test_x, num_class, global_max_iter, lasso_max_iter, alpha)
+# print('Label: Matched %d - Real %d \n',matched_pred)
 
 
 conf_mat = confusion_matrix(test_y, matched_pred)
