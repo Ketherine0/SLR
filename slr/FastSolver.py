@@ -57,11 +57,8 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
         X_old = X
         L_old = L
 
-        # (1) Solve L_{k+1}= argmin L : ||L||_* + beta/(2*alpha) * ||Y - D@X_k - L + (1/beta)Lambda_k||_F^2 
-        start = time.process_time()
+        # (1) Solve L_{k+1}= argmin L : ||L||_* + beta/(2*alpha) * ||Y - D@X_k - L + (1/beta)Lambda_k||_F^2
         U, S, V = scipy.sparse.linalg.svds(Y - D @ X + (1 / beta) * Lambda)
-        elapsed = (time.process_time() - start)
-        print("SVD time: ", elapsed)
 
         S = shrink(S, (alpha / beta))
         L = U @ np.diag(S) @ V
