@@ -89,3 +89,5 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
                 np.linalg.norm(L_old - L) < tolL * np.linalg.norm(L_old)):
             break
 
+    return X, L
+
