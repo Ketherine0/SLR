@@ -45,7 +45,7 @@ def GenerateDataMatrix(path):
                     Data_x = np.hstack((Data_x,x.values.reshape(75,-1)))
 
             if len(y_uni)==1:
-                labels = labels+[0]*len(y)
+                labels = labels+[1]*len(y)
             elif len(y_uni)==2:
                 labels = labels+[y_uni[1]]*len(y)
 
