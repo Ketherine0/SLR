@@ -19,13 +19,22 @@ def FastIllinoisSolver(DtD, Dtb, x, tauInv, betaTauInv, lasso_max_iter):
 
     tol_apg = 1e-6 # tolerance
     t_prev = 1
-    z = x
+    p = x
+    p_prev = x
     for i in range(lasso_max_iter):
         x_prev = x
-        x = shrink(z - tauInv * (DtD@z - Dtb), betaTauInv)
+        grad = DtD@p - Dtb
+        x = shrink(p - tauInv * grad, betaTauInv)
         if np.linalg.norm(x_prev - x) < tol_apg * np.linalg.norm(x_prev):
             break
+        if np.dot(grad.T, x-x_prev) > 0:
+            p = p_prev
+            x = x_prev
+            t = 1
+            t_prev = t
+            continue
         t = (1 + np.sqrt(1 + 4*t_prev**2)) / 2
-        z = x + ((t_prev-1) / t) * (x - x_prev)
+        p_prev = p
+        p = x + ((t_prev-1) / t) * (x - x_prev)
         t_prev = t
     return x
