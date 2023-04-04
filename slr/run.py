@@ -35,7 +35,7 @@ train_sample_per_class = 2000
 test_sample_per_class = 20
 
 
-for i in range(4):
+for i in range(1,4):
     train_idx = random.sample(class_idx[i], k=round(len(class_idx[i]) * 0.8))
     test_idx = list(set(class_idx[i]) - set(train_idx))
     train_indices.append(train_idx)
@@ -64,18 +64,18 @@ alpha = 1
 # confussion_matrix=np.zeros((7,7))
 num_correct_classified=0
 num_experiments_run=0
-num_class = 4
+num_class =3
 
 print(test_x.shape)
 print("Generating")
-for i in range(num_class):
+for i in range(2,num_class+1):
     for j in range(test_sample_per_class):
-        test_data = test_x[(i-1)*test_sample_per_class:i*test_sample_per_class]
+        test_data = test_x[(i-2)*test_sample_per_class:(i-1)*test_sample_per_class]
         matched_label, Xr, Lr = ccSolveModel(dictionary, train_y, test_x, num_class, global_max_iter, lasso_max_iter, alpha)
         print('Label: Matched %d - Real %d \n',matched_label,i)
         if (matched_label==i):
             num_correct_classified += 1
-        num_experiments_run += num_experiments_run
+        num_experiments_run += 1
         print('Partial Recognition Rate = %f \n', num_correct_classified / num_experiments_run);
 
 
