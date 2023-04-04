@@ -31,6 +31,7 @@ test_x = np.zeros((1))
 train_y = []
 test_y = []
 begin = False
+test_sample_per_class = 2000
 
 
 for i in range(4):
@@ -38,18 +39,18 @@ for i in range(4):
     test_idx = list(set(class_idx[i]) - set(train_idx))
     train_indices.append(train_idx)
     test_indices.append(test_idx)
-    train_y = (train_y+(np.array(y)[train_idx].tolist()))[:2000]
+    train_y = (train_y+(np.array(y)[train_idx].tolist()))[:test_sample_per_class]
     test_y = (test_y + (np.array(y)[test_idx].tolist()))[:50]
     if not begin:
         # train_x = X[:,train_idx]
         # test_x = X[:,test_idx]
-        train_x = X[:,train_idx][:,:2000]
+        train_x = X[:,train_idx][:,:test_sample_per_class]
         test_x = X[:,test_idx][:,:50]
         begin = True
     else:
         # train_x = np.hstack((train_x, X[:,train_idx]))
         # test_x = np.hstack((test_x, X[:, test_idx]))
-        train_x = np.hstack((train_x, X[:,train_idx]))[:,:2000]
+        train_x = np.hstack((train_x, X[:,train_idx]))[:,:test_sample_per_class]
         test_x = np.hstack((test_x, X[:, test_idx]))[:,:50]
     # print(train_x.shape)
 
@@ -60,7 +61,7 @@ global_max_iter=600
 lasso_max_iter=100
 alpha = 10
 
-global_max_iter=60
+global_max_iter=20
 lasso_max_iter=200
 alpha = 1
 # confussion_matrix=np.zeros((7,7))
@@ -69,10 +70,8 @@ num_experiments_run=0
 num_class = 4
 
 print("Generating")
-print(len(train_y))
-class_pred, Xr, Lr = ccSolveModel(dictionary, train_y, test_x, num_class, alpha, global_max_iter, lasso_max_iter)
-print(test_x.shape)
-class_pred, Xr, Lr = ccSolveModel(dictionary, train_y, test_x, num_class, global_max_iter, lasso_max_iter, alpha)
-# print('Label: Matched %d - Real %d \n',class_pred)
+matched_pred, Xr, Lr = ccSolveModel(dictionary, train_y, test_x, num_class, global_max_iter, lasso_max_iter, alpha)
+print('Label: Matched %d - Real %d \n',matched_pred)
 
-conf_mat = confusion_matrix(test_y, class_pred)
+
+conf_mat = confusion_matrix(test_y, matched_pred)
