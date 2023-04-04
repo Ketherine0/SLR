@@ -1,8 +1,8 @@
-# from GenerateDataMatrix2 import GenerateDataMatrix
+from GenerateDataMatrix2 import GenerateDataMatrix
 
 ### switch to the first method of generating data
 ### Give each video a label
-from GenerateDataMatrix1 import GenerateDataMatrix
+# from GenerateDataMatrix1 import GenerateDataMatrix
 from CountVideosPerClass import CountVideosPerClass
 from GetClassIndex import GetClassIndex
 from ccSolveModel import ccSolveModel
@@ -13,7 +13,7 @@ import numpy as np
 
 
 path = "../stroke_data/data_new"
-X, y = GenerateDataMatrix(path)
+X, y = GenerateDataMatrix(path,30)
 
 ### Use second generation method
 #X, y = GenerateDataMatrix(path, 10)
@@ -38,18 +38,18 @@ for i in range(4):
     test_idx = list(set(class_idx[i]) - set(train_idx))
     train_indices.append(train_idx)
     test_indices.append(test_idx)
-    train_y = train_y+(np.array(y)[train_idx].tolist())
-    test_y = test_y + (np.array(y)[test_idx].tolist())
+    train_y = (train_y+(np.array(y)[train_idx].tolist()))[:2000]
+    test_y = (test_y + (np.array(y)[test_idx].tolist()))[:50]
     if not begin:
-        train_x = X[:,train_idx]
-        test_x = X[:,test_idx]
-        train_x = X[:,train_idx][:,:10000]
+        # train_x = X[:,train_idx]
+        # test_x = X[:,test_idx]
+        train_x = X[:,train_idx][:,:2000]
         test_x = X[:,test_idx][:,:50]
         begin = True
     else:
-        train_x = np.hstack((train_x, X[:,train_idx]))
-        test_x = np.hstack((test_x, X[:, test_idx]))
-        train_x = np.hstack((train_x, X[:,train_idx]))[:,:10000]
+        # train_x = np.hstack((train_x, X[:,train_idx]))
+        # test_x = np.hstack((test_x, X[:, test_idx]))
+        train_x = np.hstack((train_x, X[:,train_idx]))[:,:2000]
         test_x = np.hstack((test_x, X[:, test_idx]))[:,:50]
     # print(train_x.shape)
 
@@ -69,6 +69,7 @@ num_experiments_run=0
 num_class = 4
 
 print("Generating")
+print(len(train_y))
 class_pred, Xr, Lr = ccSolveModel(dictionary, train_y, test_x, num_class, alpha, global_max_iter, lasso_max_iter)
 print(test_x.shape)
 class_pred, Xr, Lr = ccSolveModel(dictionary, train_y, test_x, num_class, global_max_iter, lasso_max_iter, alpha)
