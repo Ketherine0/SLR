@@ -3,7 +3,6 @@ from shrink import shrink
 from FastIllinoisSolver import FastIllinoisSolver
 import time
 
-# from scipy.linalg import eigh as largest_eigh
 from scipy.sparse.linalg import eigsh as largest_eigsh
 import scipy.sparse.linalg
 
@@ -44,12 +43,7 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
     Dt = D.T
     DtD = Dt @ D
 
-
-    # Benchmark the sparse routine
-    start = time.process_time()
     tau, evecs_large_sparse = largest_eigsh(DtD, 1, which='LM')
-    elapsed = (time.process_time() - start)
-    print("eigsh elapsed time: ", elapsed)
 
     tauInv = 1 / tau
     beta = (20 * M * K) / np.sum(np.abs(Y))
@@ -83,7 +77,7 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
             print('col: ', c)
             X[:, c] = FastIllinoisSolver(DtD, Dtb[:, c], X[:, c], tauInv, betaTauInv, lasso_max_iter)
         elapsed = (time.process_time() - start)
-        print("eigsh elapsed time: ", elapsed)
+        print("FastIllinois time: ", elapsed)
 
         # (3) Lambda_{k+1}= Lambda_k+ beta(Y-D@X_k-L)
         Lambda = Lambda + beta * (Y - D @ X - L)
