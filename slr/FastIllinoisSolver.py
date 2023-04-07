@@ -25,6 +25,10 @@ def FastIllinoisSolver(DtD, Dtb, x, tauInv, betaTauInv, lasso_max_iter):
         x_prev = x
         grad = DtD@p - Dtb
         x = shrink(p - tauInv * grad, betaTauInv)
+        t = (1 + np.sqrt(1 + 4*t_prev**2)) / 2
+        p_prev = p
+        p = x + ((t_prev-1) / t) * (x - x_prev)
+        t_prev = t
         if np.linalg.norm(x_prev - x) < tol_apg * np.linalg.norm(x_prev):
             break
         if np.dot(grad.T, x-x_prev) > 0:
@@ -33,8 +37,4 @@ def FastIllinoisSolver(DtD, Dtb, x, tauInv, betaTauInv, lasso_max_iter):
             t = 1
             t_prev = t
             continue
-        t = (1 + np.sqrt(1 + 4*t_prev**2)) / 2
-        p_prev = p
-        p = x + ((t_prev-1) / t) * (x - x_prev)
-        t_prev = t
     return x
