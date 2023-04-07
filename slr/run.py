@@ -64,7 +64,7 @@ alpha = 1
 # confussion_matrix=np.zeros((7,7))
 num_correct_classified=0
 num_experiments_run=0
-num_class =3
+num_class = 4
 
 print(test_x.shape)
 print("Generating")
