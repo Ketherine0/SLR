@@ -71,7 +71,8 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
 
         start = time.process_time()
         for c in range(K):
-            X[:, c] = FastIllinoisSolver(DtD, Dtb[:, c], X[:, c], tauInv, betaTauInv, lasso_max_iter)
+            f = lambda x: (2/beta)* np.linalg.norm(x,ord=1) + np.linalg.norm(b[:, c] - (D@x))**2
+            X[:, c] = FastIllinoisSolver(DtD, Dtb[:, c], X[:, c], D, f, tauInv, betaTauInv, lasso_max_iter)
         elapsed = (time.process_time() - start)
         print("FastIllinois time: ", elapsed)
 
