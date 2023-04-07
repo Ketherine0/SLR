@@ -12,7 +12,7 @@ import random
 import numpy as np
 
 
-path = "../stroke_data/data_new"
+path = "../SLR/stroke_data/data_new"
 X, y = GenerateDataMatrix(path,30)
 
 ### Use second generation method
@@ -72,11 +72,11 @@ for i in range(2,num_class+1):
     for j in range(test_sample_per_class):
         test_data = test_x[(i-2)*test_sample_per_class:(i-1)*test_sample_per_class]
         matched_label, Xr, Lr = ccSolveModel(dictionary, train_y, test_x, num_class, global_max_iter, lasso_max_iter, alpha)
-        print('Label: Matched %d - Real %d \n',matched_label,i)
+        print('Label: Matched %d - Real %d \n'%(matched_label,i))
         if (matched_label==i):
             num_correct_classified += 1
         num_experiments_run += 1
-        print('Partial Recognition Rate = %f \n', num_correct_classified / num_experiments_run);
+        print('Partial Recognition Rate = %f \n'%(num_correct_classified / num_experiments_run))
 
 
 # conf_mat = confusion_matrix(test_y, matched_pred)
