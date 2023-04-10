@@ -30,4 +30,5 @@ def ccSolveModel(X_train, y_train, X_test, num_classes, global_max_iter, lasso_m
         if error < nearest_class_distance:
             nearest_class_distance = error
             nearest_class_index = i
+
     return nearest_class_index, X_recovered, L_recovered
