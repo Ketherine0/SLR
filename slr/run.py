@@ -34,10 +34,10 @@ train_y = []
 test_y = []
 begin = False
 train_sample_per_class = 2000
-test_sample_per_class = 5
+test_sample_per_class = 10
 
 
-for i in range(1,4):
+for i in range(4):
     train_idx = random.sample(class_idx[i], k=round(len(class_idx[i]) * 0.8))
     test_idx = list(set(class_idx[i]) - set(train_idx))
     train_indices.append(train_idx)
@@ -58,9 +58,9 @@ for i in range(1,4):
     # print(train_x.shape)
 
 
-# dictionary = Normalize(train_x)
+dictionary = Normalize(train_x)
 # test_x = Normalize(test_x)
-dictionary = train_x
+# dictionary = train_x
 
 global_max_iter=30
 lasso_max_iter=100
@@ -74,9 +74,10 @@ num_class = 4
 summary = pd.DataFrame(columns=['Match', 'Real'])
 print("Generating")
 for i in range(2,num_class+1):
+    test_data = test_x[:,(i - 1) * test_sample_per_class:(i) * test_sample_per_class]
     # for j in range(test_sample_per_class):
-    test_data = test_x[(i-1)*test_sample_per_class:(i)*test_sample_per_class]
-    matched_label, Xr, Lr = ccSolveModel(dictionary, train_y, test_x, num_class, global_max_iter, lasso_max_iter, alpha)
+    # test_x = test_data[:,j].reshape(-1,1)
+    matched_label, Xr, Lr = ccSolveModel(dictionary, train_y, test_data, num_class, global_max_iter, lasso_max_iter, alpha)
     print('Label: Matched %d - Real %d \n'%(matched_label,i))
     if (matched_label==i):
         num_correct_classified += 1
