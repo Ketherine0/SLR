@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 
 
-path = "../SLR/stroke_data/data_new"
+path = "../../SLR/stroke_data/data_new"
 X, y = GenerateDataMatrix(path,30)
 # X, y = GenerateDataMatrix(path)
 
@@ -34,6 +34,7 @@ train_y = []
 test_y = []
 begin = False
 train_sample_per_class = 2000
+test_frame_per_sample = 50
 test_sample_per_class = 100
 
 
@@ -48,13 +49,13 @@ for i in range(4):
         # train_x = X[:,train_idx]
         # test_x = X[:,test_idx]
         train_x = X[:,train_idx][:,:train_sample_per_class]
-        test_x = X[:,test_idx][:,:test_sample_per_class]
+        test_x = X[:,test_idx][:,:test_frame_per_sample*test_sample_per_class]
         begin = True
     else:
         # train_x = np.hstack((train_x, X[:,train_idx]))
         # test_x = np.hstack((test_x, X[:, test_idx]))
         train_x = np.hstack((train_x, X[:,train_idx][:,:train_sample_per_class]))
-        test_x = np.hstack((test_x, X[:, test_idx][:,:test_sample_per_class]))
+        test_x = np.hstack((test_x, X[:, test_idx][:,:test_frame_per_sample*test_sample_per_class]))
     # print(train_x.shape)
 
 
@@ -77,16 +78,18 @@ num_class = 4
 summary = pd.DataFrame(columns=['Match', 'Real'])
 print("Generating")
 for i in range(2,num_class+1):
-    test_data = test_x[:,(i - 1) * test_sample_per_class:(i) * test_sample_per_class]
-    # for j in range(test_sample_per_class):
-    # test_x = test_data[:,j].reshape(-1,1)
-    matched_label, Xr, Lr, error = ccSolveModel(dictionary, train_y, test_data, num_class, global_max_iter, lasso_max_iter, alpha, lambdaG, delta)
-    print('Label: Matched %d - Real %d \n'%(matched_label,i))
-    if (matched_label==i):
-        num_correct_classified += 1
-    summary.loc[num_experiments_run] = [matched_label,i]
-    num_experiments_run += 1
-    print('Partial Recognition Rate = %f \n'%(num_correct_classified / num_experiments_run))
+    test_data = test_x[:, (i - 1) * test_frame_per_sample*test_sample_per_class:(i) * test_frame_per_sample*test_sample_per_class]
+    for j in range(test_sample_per_class):
+        # test_data = test_x[:,(i - 1) * test_frame_per_sample:(i) * test_frame_per_sample]
+        # for j in range(test_sample_per_class):
+        test_x = test_data[:,j*test_frame_per_sample:(j+1)*test_frame_per_sample]
+        matched_label, Xr, Lr, error = ccSolveModel(dictionary, train_y, test_x, num_class, global_max_iter, lasso_max_iter, alpha, lambdaG, delta)
+        print('Label: Matched %d - Real %d \n'%(matched_label,i))
+        if (matched_label==i):
+            num_correct_classified += 1
+        summary.loc[num_experiments_run] = [matched_label,i]
+        num_experiments_run += 1
+        print('Partial Recognition Rate = %f \n'%(num_correct_classified / num_experiments_run))
 summary.to_csv("summary.csv")
 
 # conf_mat = confusion_matrix(test_y, matched_pred)
