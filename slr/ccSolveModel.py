@@ -1,7 +1,8 @@
 import numpy as np
 from FastSolver import FastSolver
+from DenseErrorSolver import DenseErrorSolver
 
-def ccSolveModel(X_train, y_train, X_test, num_classes, global_max_iter, lasso_max_iter, alpha):
+def ccSolveModel(X_train, y_train, X_test, num_classes, global_max_iter, lasso_max_iter, alpha, delta = 0):
     '''
     Input:
     X_train:                training frames being stacked column-wise
@@ -11,13 +12,15 @@ def ccSolveModel(X_train, y_train, X_test, num_classes, global_max_iter, lasso_m
     global_max_iter:        FastSolver hyperparameter
     lasso_max_iter:         FastSolver hyperparameter
     alpha:                  FastSolver hyperparameter
+    delta:                  DenseErrorSolver hyperparameter
 
     Output:
     nearest_class_index:    label assigned to test sample
     X_recovered:            sparse matrix
     L_recovered:            low-rank matrix     
     '''
-    X_recovered, L_recovered = FastSolver(X_test, X_train, alpha, global_max_iter, lasso_max_iter)
+    #X_recovered, L_recovered = FastSolver(X_test, X_train, alpha, global_max_iter, lasso_max_iter)
+    X_recovered, L_recovered = DenseErrorSolver(X_test, X_train, alpha, delta, global_max_iter, lasso_max_iter)
     nearest_class_distance = np.Inf
     nearest_class_index = -1
     for i in range(1, num_classes):

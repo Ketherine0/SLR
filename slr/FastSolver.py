@@ -14,13 +14,13 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
     Solution via ADMM:
     Initializations: X=0?, L=0?, Lambda=ones?, beta=?
     Iterations:
-    (1) Solve L_{k+1}= argmin L : alpha||L||_* + (beta/2)||Y - D@X_k - L +(1/beta)Lambda_k||_F^2 
-                     = argmin L : ||L||_* + beta/(2*alpha) * ||Y - D@X_k - L +(1/beta)Lambda_k||_F^2 
-        -> L_{k+1}= D_{(alpha/beta)}(Y - D@X_k + (1/beta)Lambda_k) 
-                  = U @ S_{(alpha/beta)}(Sigma) @ V^t, for the SVD of Y - D@X_k -(1/beta)Lambda_k.
-    (2) Solve X_{k+1}= argmin X : ||X||_1 + (beta/2)||Y - D@X_k - L +(1/beta)Lambda_k||_F^2 
+    (1) Solve L_{k+1}= argmin L : alpha||L||_* + (beta/2)||Y - D@X_k - L + (1/beta)Lambda_k||_F^2 
+                     = argmin L : ||L||_* + beta/(2*alpha) * ||Y - D@X_k - L + (1/beta)Lambda_k||_F^2 
+        -> L_{k+1}= Shrink_{(alpha/beta)}(Y - D@X_k + (1/beta)Lambda_k) 
+                  = U @ S_{(alpha/beta)}(Sigma) @ V^t, for the SVD of Y - D@X_k - (1/beta)Lambda_k.
+    (2) Solve X_{k+1}= argmin X : ||X||_1 + (beta/2)||Y - D@X_k - L + (1/beta)Lambda_k||_F^2 
         -> Lasso problem
-    (3) Lambda_{k+1}= Lambda_k+ beta(Y - D@X_k - L)
+    (3) Lambda_{k+1}= Lambda_k + beta(Y - D@X_k - L)
 
     Input: 
     Y:                  test sample
@@ -44,7 +44,6 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
     DtD = Dt @ D
 
     tau, evecs_large_sparse = largest_eigsh(DtD, 1, which='LM')
-
     tauInv = 1 / tau
     beta = (20 * M * K) / np.sum(np.abs(Y))
     betaInv = 1 / beta
@@ -53,13 +52,12 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
     tolX = 1e-6
     tolL = 1e-6
     for i in range(global_max_iter):
-        print('Global Iteration %d of %d \n' % (i, global_max_iter))
+        print('\nGlobal Iteration %d of %d' % (i, global_max_iter))
         X_old = X
         L_old = L
 
         # (1) Solve L_{k+1}= argmin L : ||L||_* + beta/(2*alpha) * ||Y - D@X_k - L + (1/beta)Lambda_k||_F^2
         U, S, V = scipy.sparse.linalg.svds(Y - D @ X + (1 / beta) * Lambda)
-
         S = shrink(S, (alpha / beta))
         L = U @ np.diag(S) @ V
 
@@ -68,11 +66,10 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
         b = (Y - L + (1 / beta) * Lambda)
         Dtb = Dt @ b
         print("begin FastIllinois")
-
         start = time.process_time()
         for c in range(K):
             f = lambda x: (2/beta)* np.linalg.norm(x,ord=1) + np.linalg.norm(b[:, c] - (D@x))**2
-            X[:, c] = FastIllinoisSolver(DtD, Dtb[:, c], X[:, c], D, f, tauInv, betaTauInv, lasso_max_iter)
+            X[:, c] = FastIllinoisSolver(DtD, Dtb[:, c], X[:, c], f, tauInv, betaTauInv, lasso_max_iter)
         elapsed = (time.process_time() - start)
         print("FastIllinois time: ", elapsed)
 
@@ -80,12 +77,13 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
         Lambda = Lambda + beta * (Y - D @ X - L)
 
         # Stopping Criteria
-        print('X_sum',np.sum(X==0))
-        print('X_sum',np.sum(X!=0))
-        print("L_norm_diff_ratio",np.linalg.norm(L_old - L)/np.linalg.norm(L_old))
         if (np.linalg.norm(X_old - X) < tolX * np.linalg.norm(X_old)) and (
                 np.linalg.norm(L_old - L) < tolL * np.linalg.norm(L_old)):
             break
+        print('\nL1 norm of X =', np.sum(np.abs(X)))
+        print('Nuclear norm of L =', np.sum(S))
+        print('Objective funcion', np.sum(np.abs(X)) + alpha * np.sum(S))
+        print('Constraint error', np.linalg.norm(Y - D @ X - L))
 
     return X, L
 
