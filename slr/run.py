@@ -35,7 +35,7 @@ test_y = []
 begin = False
 train_sample_per_class = 2000
 test_frame_per_sample = 50
-test_sample_per_class = 100
+test_sample_per_class = 5
 
 
 for i in range(4):
@@ -82,8 +82,8 @@ for i in range(2,num_class+1):
     for j in range(test_sample_per_class):
         # test_data = test_x[:,(i - 1) * test_frame_per_sample:(i) * test_frame_per_sample]
         # for j in range(test_sample_per_class):
-        test_x = test_data[:,j*test_frame_per_sample:(j+1)*test_frame_per_sample]
-        matched_label, Xr, Lr, error = ccSolveModel(dictionary, train_y, test_x, num_class, global_max_iter, lasso_max_iter, alpha, lambdaG, delta)
+        test_frame = test_data[:,j*test_frame_per_sample:(j+1)*test_frame_per_sample]
+        matched_label, Xr, Lr, error = ccSolveModel(dictionary, train_y, test_frame, num_class, global_max_iter, lasso_max_iter, alpha, lambdaG, delta)
         print('Label: Matched %d - Real %d \n'%(matched_label,i))
         if (matched_label==i):
             num_correct_classified += 1
