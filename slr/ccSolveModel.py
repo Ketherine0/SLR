@@ -25,7 +25,7 @@ def ccSolveModel(X_train, y_train, X_test, num_classes, global_max_iter, lasso_m
     X_recovered, L_recovered = group_sparse_rep(X_test, X_train, y_train, alpha, lambdaG, global_max_iter)
     nearest_class_distance = np.Inf
     nearest_class_index = -1
-    for i in range(1, num_classes):
+    for i in range(2, num_classes+1):
         idx = [index for index, element in enumerate(y_train) if element == i]
         class_matrix = X_train[:, idx]
         class_representation = class_matrix @ X_recovered[idx,:]
