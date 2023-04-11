@@ -34,8 +34,8 @@ train_y = []
 test_y = []
 begin = False
 train_sample_per_class = 2000
-test_frame_per_sample = 50
-test_sample_per_class = 5
+test_frame_per_sample = 30
+test_sample_per_class = 50
 
 
 for i in range(4):
@@ -77,7 +77,7 @@ num_class = 4
 
 summary = pd.DataFrame(columns=['Match', 'Real'])
 print("Generating")
-a=0
+idx=0
 for i in range(2,num_class+1):
     test_data = test_x[:, (i - 1) * test_frame_per_sample*test_sample_per_class:(i) * test_frame_per_sample*test_sample_per_class]
     for j in range(test_sample_per_class):
@@ -85,8 +85,8 @@ for i in range(2,num_class+1):
         # for j in range(test_sample_per_class):
         test_frame = test_data[:,j*test_frame_per_sample:(j+1)*test_frame_per_sample]
         matched_label, Xr, Lr, error = ccSolveModel(dictionary, train_y, test_frame, num_class, global_max_iter, lasso_max_iter, alpha, lambdaG, delta)
-        a+= 1
-        print("Sample: ",a)
+        idx += 1
+        print("Sample: %d"%idx)
         print('Label: Matched %d - Real %d \n'%(matched_label,i))
         if (matched_label==i):
             num_correct_classified += 1
