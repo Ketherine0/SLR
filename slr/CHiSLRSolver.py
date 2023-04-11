@@ -2,7 +2,7 @@ import numpy as np
 from scipy.sparse.linalg import svds
 from scipy.sparse.linalg import eigsh as largest_eigsh
 
-def group_sparse_rep(Y, D, y_train, lambdaL, lambdaG, maxIter, eps = 1e-7, rho = 1.05):
+def group_sparse_rep(Y, D, y_train, lambdaL, lambdaG, maxIter, eps = 0.05, rho = 1.05):
     '''
     Optimization:  min_{X,L}: ||X||_1 + lambdaG*sum(||X_g||_F) + lambdaL*||L||_* st: Y = DX + L
 
@@ -33,6 +33,7 @@ def group_sparse_rep(Y, D, y_train, lambdaL, lambdaG, maxIter, eps = 1e-7, rho =
     X = np.zeros((nD,pY))
     Z = np.zeros((mD,pY))
     L = Z
+    error = []
 
     for iter in range(maxIter):
         # Update L
@@ -71,8 +72,10 @@ def group_sparse_rep(Y, D, y_train, lambdaL, lambdaG, maxIter, eps = 1e-7, rho =
     
         mu = np.minimum(mu*rho, mu_max)
         stopCriterion = np.linalg.norm(Y - L - D@X)
-        if np.remainder(iter,20) == 0:
-            print('Iter %d Error %.5f'%(iter,stopCriterion))
+        error.append(stopCriterion)
+        if np.remainder(iter+1,20) == 0:
+            print('Iter %d Error %.5f'%(iter+1,stopCriterion))
         if stopCriterion < eps:
+            print('Iter %d Error %.5f'%(iter+1,stopCriterion))
             break
-    return X, L
+    return X, L, error
