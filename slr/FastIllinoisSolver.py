@@ -1,7 +1,7 @@
 import numpy as np
 from shrink import shrink
 
-def FastIllinoisSolver(DtD, Dtb, x, D, f, tauInv, betaTauInv, lasso_max_iter):
+def FastIllinoisSolver(DtD, Dtb, x, f, tauInv, betaTauInv, lasso_max_iter):
     '''
     Solve lasso problem: x_{k+1}= argmin x : (2/beta)||x||_1 + ||b-Dx||_2^2
 
