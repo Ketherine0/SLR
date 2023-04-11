@@ -81,8 +81,6 @@ idx=0
 for i in range(2,num_class+1):
     test_data = test_x[:, (i - 1) * test_frame_per_sample*test_sample_per_class:(i) * test_frame_per_sample*test_sample_per_class]
     for j in range(test_sample_per_class):
-        # test_data = test_x[:,(i - 1) * test_frame_per_sample:(i) * test_frame_per_sample]
-        # for j in range(test_sample_per_class):
         test_frame = test_data[:,j*test_frame_per_sample:(j+1)*test_frame_per_sample]
         matched_label, Xr, Lr, error = ccSolveModel(dictionary, train_y, test_frame, num_class, global_max_iter, lasso_max_iter, alpha, lambdaG, delta)
         idx += 1
@@ -95,4 +93,3 @@ for i in range(2,num_class+1):
         print('Partial Recognition Rate = %f \n'%(num_correct_classified / num_experiments_run))
 summary.to_csv("summary.csv")
 
-# conf_mat = confusion_matrix(test_y, matched_pred)
