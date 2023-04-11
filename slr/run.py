@@ -34,8 +34,8 @@ train_y = []
 test_y = []
 begin = False
 train_sample_per_class = 2000
-test_frame_per_sample = 30
-test_sample_per_class = 50
+test_frame_per_sample = 20
+test_sample_per_class = 30
 
 
 for i in range(4):
@@ -44,7 +44,7 @@ for i in range(4):
     train_indices.append(train_idx)
     test_indices.append(test_idx)
     train_y = (train_y+(np.array(y)[train_idx][:train_sample_per_class].tolist()))
-    test_y = (test_y + (np.array(y)[test_idx][:test_sample_per_class].tolist()))
+    test_y = (test_y + (np.array(y)[test_idx][:test_sample_per_class*test_sample_per_class].tolist()))
     if not begin:
         # train_x = X[:,train_idx]
         # test_x = X[:,test_idx]
@@ -56,7 +56,6 @@ for i in range(4):
         # test_x = np.hstack((test_x, X[:, test_idx]))
         train_x = np.hstack((train_x, X[:,train_idx][:,:train_sample_per_class]))
         test_x = np.hstack((test_x, X[:, test_idx][:,:test_frame_per_sample*test_sample_per_class]))
-    # print(train_x.shape)
 
 
 # dictionary = Normalize(train_x)
@@ -80,6 +79,7 @@ print("Generating")
 idx=0
 for i in range(2,num_class+1):
     test_data = test_x[:, (i - 1) * test_frame_per_sample*test_sample_per_class:(i) * test_frame_per_sample*test_sample_per_class]
+    print(test_data.shape)
     for j in range(test_sample_per_class):
         test_frame = test_data[:,j*test_frame_per_sample:(j+1)*test_frame_per_sample]
         matched_label, Xr, Lr, error = ccSolveModel(dictionary, train_y, test_frame, num_class, global_max_iter, lasso_max_iter, alpha, lambdaG, delta)
