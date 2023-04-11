@@ -33,8 +33,8 @@ test_x = np.zeros((1))
 train_y = []
 test_y = []
 begin = False
-train_sample_per_class = 400
-test_sample_per_class = 20
+train_sample_per_class = 2000
+test_sample_per_class = 100
 
 
 for i in range(4):
@@ -76,7 +76,7 @@ num_class = 4
 
 summary = pd.DataFrame(columns=['Match', 'Real'])
 print("Generating")
-for i in range(1,num_class):
+for i in range(2,num_class+1):
     test_data = test_x[:,(i - 1) * test_sample_per_class:(i) * test_sample_per_class]
     # for j in range(test_sample_per_class):
     # test_x = test_data[:,j].reshape(-1,1)
