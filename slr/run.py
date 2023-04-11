@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 
 
-path = "../../SLR/stroke_data/data_new"
+path = "../SLR/stroke_data/data_new"
 X, y = GenerateDataMatrix(path,30)
 # X, y = GenerateDataMatrix(path)
 
@@ -62,7 +62,7 @@ for i in range(4):
 # test_x = Normalize(test_x)
 dictionary = train_x
 
-global_max_iter=200
+global_max_iter=400
 lasso_max_iter=100
 alpha = 5
 delta = 30
@@ -80,7 +80,7 @@ for i in range(2,num_class+1):
     test_data = test_x[:,(i - 1) * test_sample_per_class:(i) * test_sample_per_class]
     # for j in range(test_sample_per_class):
     # test_x = test_data[:,j].reshape(-1,1)
-    matched_label, Xr, Lr = ccSolveModel(dictionary, train_y, test_data, num_class, global_max_iter, lasso_max_iter, alpha, lambdaG, delta)
+    matched_label, Xr, Lr, error = ccSolveModel(dictionary, train_y, test_data, num_class, global_max_iter, lasso_max_iter, alpha, lambdaG, delta)
     print('Label: Matched %d - Real %d \n'%(matched_label,i))
     if (matched_label==i):
         num_correct_classified += 1
