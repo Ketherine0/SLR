@@ -1,8 +1,9 @@
 import numpy as np
 from FastSolver import FastSolver
 from DenseErrorSolver import DenseErrorSolver
+from CHiSLRSolver import group_sparse_rep
 
-def ccSolveModel(X_train, y_train, X_test, num_classes, global_max_iter, lasso_max_iter, alpha, delta = 0):
+def ccSolveModel(X_train, y_train, X_test, num_classes, global_max_iter, lasso_max_iter, alpha, lambdaG, delta = 0):
     '''
     Input:
     X_train:                training frames being stacked column-wise
@@ -20,7 +21,8 @@ def ccSolveModel(X_train, y_train, X_test, num_classes, global_max_iter, lasso_m
     L_recovered:            low-rank matrix     
     '''
     #X_recovered, L_recovered = FastSolver(X_test, X_train, alpha, global_max_iter, lasso_max_iter)
-    X_recovered, L_recovered = DenseErrorSolver(X_test, X_train, alpha, delta, global_max_iter, lasso_max_iter)
+    #X_recovered, L_recovered = DenseErrorSolver(X_test, X_train, alpha, delta, global_max_iter, lasso_max_iter)
+    X_recovered, L_recovered = group_sparse_rep(X_test, X_train, y_train, alpha, lambdaG, global_max_iter)
     nearest_class_distance = np.Inf
     nearest_class_index = -1
     for i in range(2, num_classes+1):
