@@ -58,9 +58,9 @@ for i in range(4):
     # print(train_x.shape)
 
 
-dictionary = Normalize(train_x)
-test_x = Normalize(test_x)
-# dictionary = train_x
+# dictionary = Normalize(train_x)
+# test_x = Normalize(test_x)
+dictionary = train_x
 
 global_max_iter=200
 lasso_max_iter=100
@@ -71,6 +71,7 @@ lambdaG = 10
 num_correct_classified=0
 num_experiments_run=0
 num_class = 4
+
 
 
 summary = pd.DataFrame(columns=['Match', 'Real'])
