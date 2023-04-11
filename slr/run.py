@@ -62,10 +62,11 @@ dictionary = Normalize(train_x)
 # test_x = Normalize(test_x)
 # dictionary = train_x
 
-global_max_iter=30
+global_max_iter=200
 lasso_max_iter=100
-alpha = 10
-delta = 10
+alpha = 5
+delta = 30
+lambdaG = 10
 # confussion_matrix=np.zeros((7,7))
 num_correct_classified=0
 num_experiments_run=0
@@ -78,7 +79,7 @@ for i in range(2,num_class+1):
     test_data = test_x[:,(i - 1) * test_sample_per_class:(i) * test_sample_per_class]
     # for j in range(test_sample_per_class):
     # test_x = test_data[:,j].reshape(-1,1)
-    matched_label, Xr, Lr = ccSolveModel(dictionary, train_y, test_data, num_class, global_max_iter, lasso_max_iter, alpha)
+    matched_label, Xr, Lr = ccSolveModel(dictionary, train_y, test_data, num_class, global_max_iter, lasso_max_iter, alpha, lambdaG, delta)
     print('Label: Matched %d - Real %d \n'%(matched_label,i))
     if (matched_label==i):
         num_correct_classified += 1
