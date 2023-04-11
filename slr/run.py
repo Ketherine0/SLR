@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 
 
-path = "../../SLR/stroke_data/data_new"
+path = "../SLR/stroke_data/data_new"
 # X, y = GenerateDataMatrix(path,30)
 X, y = GenerateDataMatrix(path)
 
@@ -65,6 +65,7 @@ dictionary = Normalize(train_x)
 global_max_iter=30
 lasso_max_iter=100
 alpha = 10
+delta = 10
 # confussion_matrix=np.zeros((7,7))
 num_correct_classified=0
 num_experiments_run=0
