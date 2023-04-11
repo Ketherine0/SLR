@@ -29,10 +29,8 @@ def ccSolveModel(X_train, y_train, X_test, num_classes, global_max_iter, lasso_m
         idx = [index for index, element in enumerate(y_train) if element == i]
         class_matrix = X_train[:, idx]
         class_representation = class_matrix @ X_recovered[idx,:]
-        print(X_recovered[idx,:].shape)
         class_representation += L_recovered
         error = np.linalg.norm(class_representation - X_test)
-        print(X_test.shape)
         print(error, i)
         if error < nearest_class_distance:
             nearest_class_distance = error
