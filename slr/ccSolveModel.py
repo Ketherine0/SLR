@@ -22,7 +22,8 @@ def ccSolveModel(X_train, y_train, X_test, num_classes, global_max_iter, lasso_m
     '''
     #X_recovered, L_recovered = FastSolver(X_test, X_train, alpha, global_max_iter, lasso_max_iter)
     #X_recovered, L_recovered = DenseErrorSolver(X_test, X_train, alpha, delta, global_max_iter, lasso_max_iter)
-    X_recovered, L_recovered, error = group_sparse_rep(X_test, X_train, y_train, alpha, lambdaG, global_max_iter)
+    X_recovered, L_recovered, error1 = group_sparse_rep(X_test, X_train, y_train, alpha, lambdaG, global_max_iter)
+    print(len(error1))
     nearest_class_distance = np.Inf
     nearest_class_index = -1
     for i in range(2, num_classes+1):
@@ -36,4 +37,4 @@ def ccSolveModel(X_train, y_train, X_test, num_classes, global_max_iter, lasso_m
             nearest_class_distance = error
             nearest_class_index = i
 
-    return nearest_class_index, X_recovered, L_recovered, error
+    return nearest_class_index, X_recovered, L_recovered, error1
