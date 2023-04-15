@@ -11,6 +11,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score
 import random
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 
 path = "../../SLR/stroke_data/data_new"
@@ -35,7 +36,7 @@ test_y = []
 begin = False
 train_sample_per_class = 2000
 test_frame_per_sample = 20
-test_sample_per_class = 30
+test_sample_per_class = 2
 
 
 for i in range(4):
@@ -91,5 +92,10 @@ for i in range(2,num_class+1):
         summary.loc[num_experiments_run] = [matched_label,i]
         num_experiments_run += 1
         print('Partial Recognition Rate = %f \n'%(num_correct_classified / num_experiments_run))
+        plt.plot(np.arange(len(error) - 1), np.log10(np.array(error[:-1] - error[-1])), 'b')
+        plt.xlabel("Number of iteration")
+        plt.ylabel("Error")
+        plt.show()
+
 summary.to_csv("summary.csv")
 
