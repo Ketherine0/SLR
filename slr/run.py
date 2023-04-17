@@ -1,8 +1,8 @@
-# from GenerateDataMatrix2 import GenerateDataMatrix
+from GenerateDataMatrix2 import GenerateDataMatrix
 
 ### switch to the first method of generating data
 ### Give each video a label
-from GenerateDataMatrix1 import GenerateDataMatrix
+# from GenerateDataMatrix1 import GenerateDataMatrix
 from CountVideosPerClass import CountVideosPerClass
 from GetClassIndex import GetClassIndex
 from ccSolveModel import ccSolveModel
@@ -17,8 +17,8 @@ import time
 
 
 path = "../../SLR/stroke_data/data_new"
-# X, y = GenerateDataMatrix(path,30)
-X, y = GenerateDataMatrix(path)
+X, y = GenerateDataMatrix(path,30)
+# X, y = GenerateDataMatrix(path)
 
 ### Use second generation method
 #X, y = GenerateDataMatrix(path, 10)
@@ -38,7 +38,7 @@ test_y = []
 begin = False
 train_sample_per_class = 2000
 test_frame_per_sample = 20
-test_sample_per_class = 3
+test_sample_per_class = 1
 
 
 for i in range(4):
@@ -61,9 +61,9 @@ for i in range(4):
         test_x = np.hstack((test_x, X[:, test_idx][:,:test_frame_per_sample*test_sample_per_class]))
 
 
-# dictionary = Normalize(train_x)
+dictionary = Normalize(train_x)
 # test_x = Normalize(test_x)
-dictionary = train_x
+# dictionary = train_x
 
 global_max_iter=50
 lasso_max_iter=100
