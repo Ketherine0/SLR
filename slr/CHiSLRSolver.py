@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.sparse.linalg import svds
 from scipy.sparse.linalg import eigsh as largest_eigsh
+import time
 
 def group_sparse_rep(Y, D, y_train, lambdaL, lambdaG, maxIter, eps = 0.05, rho = 1.05):
     '''
@@ -52,7 +53,9 @@ def group_sparse_rep(Y, D, y_train, lambdaL, lambdaG, maxIter, eps = 0.05, rho =
         R = X - tau*G
         alpha = tau/mu
         beta = lambdaG*tau/mu
-        
+
+        print("begin Group sparse:")
+        start = time.process_time()
         for i in np.unique(y_train):
             idx = [index for index, element in enumerate(y_train) if element == i]
             Rg = R[idx,:]
@@ -66,6 +69,8 @@ def group_sparse_rep(Y, D, y_train, lambdaL, lambdaG, maxIter, eps = 0.05, rho =
                 H_new = H / nH * np.maximum(nH - beta, 0)
                 for l in range(H_new.shape[0]):
                     X[idx[l],:] =  H[l,:]
+        elapsed = (time.process_time() - start)
+        print("Group sparse time: ", elapsed)
 
         # Update Z 
         Z = Z + mu*(Y - L - D@X)
