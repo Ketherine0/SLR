@@ -8,6 +8,7 @@ from GetClassIndex import GetClassIndex
 from ccSolveModel import ccSolveModel
 from Normalize import Normalize
 from sklearn.metrics import confusion_matrix, accuracy_score
+import platform
 import random
 import numpy as np
 import pandas as pd
@@ -80,7 +81,7 @@ print(test_x.shape)
 summary = pd.DataFrame(columns=['Match', 'Real'])
 print("Generating")
 idx=0
-T1 = time.clock()
+T1 = time.process_time()
 
 for i in range(2,num_class+1):
     test_data = test_x[:, (i - 1) * test_frame_per_sample*test_sample_per_class:(i) * test_frame_per_sample*test_sample_per_class]
@@ -99,7 +100,7 @@ for i in range(2,num_class+1):
         plt.xlabel("Number of iteration")
         plt.ylabel("Error")
         plt.show()
-T2 = time.clock()
+T2 = time.process_time()
 print('FastSolver' % ((T2 - T1)*1000))
 
 summary.to_csv("summary_slr.csv")
