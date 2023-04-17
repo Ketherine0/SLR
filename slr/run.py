@@ -96,7 +96,7 @@ for i in range(2,num_class+1):
         summary.loc[num_experiments_run] = [matched_label,i]
         num_experiments_run += 1
         pd.DataFrame(error).to_csv("Error"+str(i)+".csv")
-        # print('Partial Recognition Rate = %f \n'%(num_correct_classified / num_experiments_run))
+        print('Partial Recognition Rate = %f \n'%(num_correct_classified / num_experiments_run))
         # plt.plot(np.arange(len(error) - 1), np.log10(np.array(error[:-1] - error[-1])), 'b')
         # plt.xlabel("Number of iteration")
         # plt.ylabel("Error")
@@ -104,5 +104,5 @@ for i in range(2,num_class+1):
 T2 = time.process_time()
 print('FastSolver' % ((T2 - T1)*1000))
 
-summary.to_csv("summary_slr.csv")
+summary.to_csv("summary_chislr.csv")
 
