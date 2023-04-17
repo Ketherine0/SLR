@@ -12,6 +12,7 @@ import random
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import time
 
 
 path = "../../SLR/stroke_data/data_new"
@@ -36,7 +37,7 @@ test_y = []
 begin = False
 train_sample_per_class = 2000
 test_frame_per_sample = 20
-test_sample_per_class = 2
+test_sample_per_class = 3
 
 
 for i in range(4):
@@ -63,7 +64,7 @@ for i in range(4):
 # test_x = Normalize(test_x)
 dictionary = train_x
 
-global_max_iter=400
+global_max_iter=50
 lasso_max_iter=100
 alpha = 5
 delta = 30
@@ -73,11 +74,14 @@ num_correct_classified=0
 num_experiments_run=0
 num_class = 4
 
+print(test_x.shape)
 
 
 summary = pd.DataFrame(columns=['Match', 'Real'])
 print("Generating")
 idx=0
+T1 = time.clock()
+
 for i in range(2,num_class+1):
     test_data = test_x[:, (i - 1) * test_frame_per_sample*test_sample_per_class:(i) * test_frame_per_sample*test_sample_per_class]
     for j in range(test_sample_per_class):
@@ -91,10 +95,12 @@ for i in range(2,num_class+1):
         summary.loc[num_experiments_run] = [matched_label,i]
         num_experiments_run += 1
         print('Partial Recognition Rate = %f \n'%(num_correct_classified / num_experiments_run))
-        # plt.plot(np.arange(len(error) - 1), np.log10(np.array(error[:-1] - error[-1])), 'b')
-        # plt.xlabel("Number of iteration")
-        # plt.ylabel("Error")
-        # plt.show()
+        plt.plot(np.arange(len(error) - 1), np.log10(np.array(error[:-1] - error[-1])), 'b')
+        plt.xlabel("Number of iteration")
+        plt.ylabel("Error")
+        plt.show()
+T2 = time.clock()
+print('FastSolver' % ((T2 - T1)*1000))
 
-summary.to_csv("summary1.csv")
+summary.to_csv("summary_slr.csv")
 
