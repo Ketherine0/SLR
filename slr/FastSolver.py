@@ -51,6 +51,7 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
 
     tolX = 1e-6
     tolL = 1e-6
+    error = []
     for i in range(global_max_iter):
         print('\nGlobal Iteration %d of %d' % (i, global_max_iter))
         X_old = X
@@ -84,6 +85,8 @@ def FastSolver(Y, D, alpha, global_max_iter, lasso_max_iter):
         print('Nuclear norm of L =', np.sum(S))
         print('Objective funcion', np.sum(np.abs(X)) + alpha * np.sum(S))
         print('Constraint error', np.linalg.norm(Y - D @ X - L))
+        stopCriterion = np.linalg.norm(Y - L - D@X)
+        error.append(stopCriterion)
 
-    return X, L
+    return X, L, error
 
