@@ -36,8 +36,11 @@ def group_sparse_rep(Y, D, y_train, lambdaL, lambdaG, maxIter, eps = 0.05, rho =
     L = Z
     error = []
 
+    print("begin Group sparse:")
+    elap=[]
     for iter in range(maxIter):
         # Update L
+        start = time.process_time()
         U, S, V = svds(Y - D @ X + Z / mu)
         r_term = np.sum(S>(lambdaL/mu))
         if r_term >= 1:
@@ -54,8 +57,7 @@ def group_sparse_rep(Y, D, y_train, lambdaL, lambdaG, maxIter, eps = 0.05, rho =
         alpha = tau/mu
         beta = lambdaG*tau/mu
 
-        print("begin Group sparse:")
-        start = time.process_time()
+
         for i in np.unique(y_train):
             idx = [index for index, element in enumerate(y_train) if element == i]
             Rg = R[idx,:]
@@ -69,8 +71,7 @@ def group_sparse_rep(Y, D, y_train, lambdaL, lambdaG, maxIter, eps = 0.05, rho =
                 H_new = H / nH * np.maximum(nH - beta, 0)
                 for l in range(H_new.shape[0]):
                     X[idx[l],:] =  H[l,:]
-        elapsed = (time.process_time() - start)
-        print("Group sparse time: ", elapsed)
+
 
         # Update Z 
         Z = Z + mu*(Y - L - D@X)
@@ -83,4 +84,6 @@ def group_sparse_rep(Y, D, y_train, lambdaL, lambdaG, maxIter, eps = 0.05, rho =
         if stopCriterion < eps:
             print('Iter %d Error %.5f'%(iter+1,stopCriterion))
             break
-    return X, L, error
+        elapsed = (time.process_time() - start)
+        elap.append(elapsed)
+    return X, L, error, elap
