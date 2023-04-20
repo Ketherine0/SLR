@@ -36,8 +36,6 @@ def group_sparse_rep(Y, D, y_train, lambdaL, lambdaG, maxIter, eps = 0.05, rho =
     L = Z
     error = []
 
-    print("begin Group sparse:")
-    elap=[]
     for iter in range(maxIter):
         # Update L
         start = time.process_time()
@@ -84,6 +82,4 @@ def group_sparse_rep(Y, D, y_train, lambdaL, lambdaG, maxIter, eps = 0.05, rho =
         if stopCriterion < eps:
             print('Iter %d Error %.5f'%(iter+1,stopCriterion))
             break
-        elapsed = (time.process_time() - start)
-        elap.append(elapsed)
-    return X, L, error, elap
+    return X, L, error
