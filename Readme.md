@@ -1,30 +1,4 @@
-###Joint sparse and low-rank representation for emotions.
-![](illustration.png "The Joint Sparse and Low-Rank Model applied to emotion recognition.")
-Contact: xxiang@cs.jhu.edu
+###Representation Learning for Detecting Compensatory Action During Stroke Rehabilitation
 
-Please download the DATA folder (processed Extended Cohn Kanade Database)
-from https://goo.gl/Wvfndv (Dropbox) or https://goo.gl/zt89pE (Google Drive)
-and place it inside icassp15 folder. In case you cannot access Dropbox or Google Drive, please download the CK+ dataset from
-http://www.consortium.ri.cmu.edu/ckagree/ and crop the faces using a detector such as Viola-Jones.
+Rehabilitation exercise is a necessary therapy for impaired limb control after diseases like stroke, during which compensatory action is detrimental. To provide professional and automatic guidance on rehabilitation, datasets like Toronto Rehab Stroke Pose Dataset were created for training compensatory action detection models. These datasets contain rehabilitation videos with characteristics of small amount of samples and only extracted features from videos accessible. Thus rather than commonly used support vector machine and recurrent neural network models, this project explores two representation learning models, joint sparse representation and low-rankness model (SLR) and collaborative-hierarchical SLR model (C-HiSLR) proposed by Xiang and Tran (2017) applied in facial emotion classification, to detect compensatory action for videos. Experimental results demonstrate that C-HiSLR is a faster and more accurate model than SLR and more suitable for compensatory action detection.
 
-The program is developed on Windows. Except directory access issues such as '/' or '\', 'ls' or 'dir' and so on, the program should be able to easily migarated to Linux. For details of the model and the algorithm, please refer to the paper available at https://arxiv.org/abs/1410.1606} or drop me a message. You are more than welcome to cite this work as
-
-@inproceedings{xiang2015hierarchical, <br>
-  title={Hierarchical Sparse and Collaborative Low-Rank Representation for Emotion Recognition}, <br>
-  author={Xiang, Xiang and Dao, Minh and Hager, Gregory D and Tran, Trac D}, <br>
-  booktitle={IEEE ICASSP},<br>
-  pages={3811--3815},<br>
-  year={2015},<br>
-}
-
-@article{xiang2017linear,
-  title={Linear Disentangled Representation Learning For Facial Actions},
-  author={Xiang, Xiang and Tran, Trac D},
-  journal={IEEE Transactions on Circuits and Systems for Video Technology},
-  year={2017},
-  publisher={IEEE}
-}
-
-Xiang Xiang and Trac D. Tran: Linear Disentangled Representation Learning for Facial Actions. To appear at IEEE Trans. Circuits and System for Video Tech. (IEEE T-CSVT), Volume: PP, Issue: 99, 2018.
-
-See also https://www.mathworks.com/matlabcentral/fileexchange/61323-eglxiang-icassp15-emotion for the comments from the Matlab developer community.
