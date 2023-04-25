@@ -1,4 +1,4 @@
-###Representation Learning for Detecting Compensatory Action During Stroke Rehabilitation
+### Representation Learning for Detecting Compensatory Action During Stroke Rehabilitation
 
 Rehabilitation exercise is a necessary therapy for impaired limb control after diseases like stroke, during which compensatory action is detrimental. To provide professional and automatic guidance on rehabilitation, datasets like Toronto Rehab Stroke Pose Dataset were created for training compensatory action detection models. These datasets contain rehabilitation videos with characteristics of small amount of samples and only extracted features from videos accessible. Thus rather than commonly used support vector machine and recurrent neural network models, this project explores two representation learning models, joint sparse representation and low-rankness model (SLR) and collaborative-hierarchical SLR model (C-HiSLR) proposed by Xiang and Tran (2017) applied in facial emotion classification, to detect compensatory action for videos. Experimental results demonstrate that C-HiSLR is a faster and more accurate model than SLR and more suitable for compensatory action detection.
 
